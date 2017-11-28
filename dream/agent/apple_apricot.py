@@ -44,7 +44,7 @@ class Agent(BaseAgent):
         return self._recv_socket.recv_string()
 
     def act(self, action):
-        return self._send_socket.send_string(action)
+        return self._send_socket.send_string(str(action))
 
     def run(self):
         self.logger.info(f'Agent {self.name} started, binding at {self._recv_addr} & {self._send_addr}.')
@@ -59,15 +59,13 @@ class Agent(BaseAgent):
                     self.logger.info(f'New game {self.game_id} initialized.')
                 else:
                     self.logger.critical(f'Already initialized game {self.game_id}! Cannot initialize new game.')
-                action = self.policy.act(msg, None, False)
-                self.act(action)
             elif msg_type == 'YOUR TURN' and self.in_game:
+                # AI here
                 action = self.policy.act(msg, None, False)
                 self.act(action)
             elif msg_type == 'QUIT' and self.in_game:
                 self.game_id = None
-                action = self.policy.act(msg, None, True)
-                self.act(action)
+                self.act('QUIT')
                 break
             else:
                 self.logger.critical(f'Unknown message: {msg}.')
