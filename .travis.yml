@@ -5,8 +5,10 @@ install:
  - pip install flake8
  - pip install codecov
  - pip install pytest-cov
+ - pip install -r ./requirements.txt
+ - python setup.py install
 script:
  - flake8 --show-source dream
- - py.test --cov=./
+ - py.test --cov=./ ./test/
 after_success:
  - codecov
