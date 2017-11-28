@@ -1,0 +1,4 @@
+pyzmq
+flask
+flask_sqlalchemy
+coloredlogs
