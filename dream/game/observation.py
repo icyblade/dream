@@ -1,2 +1,2 @@
 class Observation(object):
-    raise NotImplementedError
+    pass
