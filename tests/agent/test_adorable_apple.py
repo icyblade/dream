@@ -1,9 +1,9 @@
 ai_true_message = [
     'Agent test started, binding at tcp://127\.0\.0\.1\:10000 & tcp://127\.0\.0\.1\:10001',
     'Receiving message: START',
-    'New game dream.agent.apple_apricot/test/[0-9]+ initialized.',
+    'New game dream.agent.adorable_apple/test/[0-9]+ initialized.',
     'Receiving message: START',
-    'Already initialized game dream.agent.apple_apricot/test/[0-9]+! Cannot initialize new game.',
+    'Already initialized game dream.agent.adorable_apple/test/[0-9]+! Cannot initialize new game.',
     'Receiving message: YOUR TURN.',
     'Receiving message: YOUR TURN.',
     'Receiving message: YOUR TURN.',
@@ -61,7 +61,7 @@ def middleware_recv(return_value):
 def ai(capsys, return_value):
     import logging
 
-    from dream.agent.apple_apricot import Agent
+    from dream.agent.adorable_apple import Agent
 
     agent = Agent('test', 'tcp://127.0.0.1:10000', 'tcp://127.0.0.1:10001', level=logging.DEBUG)
     agent.run()
@@ -70,7 +70,7 @@ def ai(capsys, return_value):
     return_value.append(err)
 
 
-def test_apple_apricot(capsys):
+def test_adorable_apple(capsys):
     import re
     from time import sleep
     from threading import Thread
