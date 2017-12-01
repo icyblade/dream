@@ -9,6 +9,6 @@ install:
  - pip install -e .
 script:
  - flake8 --show-source dream
- - py.test --cov=./
+ - py.test --cov=./dream/
 after_success:
  - codecov
