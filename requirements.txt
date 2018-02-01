@@ -2,3 +2,6 @@ pyzmq
 flask
 flask_sqlalchemy
 coloredlogs
+sklearn
+numpy
+aenum

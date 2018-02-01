@@ -3,5 +3,4 @@ class Reward(float):
 
     It's just a float.
     """
-
     pass
