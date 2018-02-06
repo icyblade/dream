@@ -5,4 +5,4 @@ def test_return_call():
     policy = ReturnCall()
 
     assert isinstance(policy.act(None, None, False), Action)
-    assert repr(policy.act(None, None, False)) == '0.0'
+    assert repr(policy.act(None, None, False)) == 'call'
