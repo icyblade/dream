@@ -4,15 +4,16 @@ import zmq
 
 from . import BaseAgent
 from ..bluff import BaseBluff
+from ..game.observation import Observation
 from ..handcard import BaseHandCard
 from ..logger import build_logger
-from ..policy.return_call import ReturnCall
+from ..policy.regression_v1 import Regression
 from ..style import BaseStyle
 from ..value import BaseValue
 
 
 class Agent(BaseAgent):
-    """Bitter Banana Texas Hold'em AI.
+    """Creamy Coconut Texas Hold'em AI.
 
     Parameters
     --------
@@ -36,7 +37,7 @@ class Agent(BaseAgent):
         self._socket = self._context.socket(zmq.REP)
         self._socket.bind(f'tcp://*:{port}')
 
-        self.policy = ReturnCall()
+        self.policy = Regression()
         self.value = BaseValue()
         self.style = BaseStyle()
         self.bluff = BaseBluff()
@@ -125,14 +126,17 @@ class Agent(BaseAgent):
             msg_type = self._get_message_type(msg)
 
             if msg_type == 'PLAYERACTION':
-                action = self.policy.act(msg, None, None)
+                observation = Observation()
+                observation.combo = msg['RQ']['data']['playerAction']['player']['card'].split(' ')
+                observation.seat = int(msg['RQ']['data']['playerAction']['player']['position'])
+                action = self.policy.act(observation, None, None)
                 self.logger.debug(f'Acting action: {action}.')
                 self.act(action)
             elif msg_type == 'DELETE':
-                self.send_exception(SystemExit)
+                self.send_exception(SystemExit())
                 return
             else:
-                self.send_exception(Exception)
+                self.send_exception(Exception())
 
     def _validate_message(self, msg):
         """Validate message.

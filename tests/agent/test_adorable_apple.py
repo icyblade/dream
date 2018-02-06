@@ -13,7 +13,7 @@ ai_true_message = [
     'Agent test terminated.',
 ]
 middleware_recv_true_message = [
-    '0.0', '0.0', '0.0', 'QUIT'
+    'call', 'call', 'call', 'QUIT'
 ]
 
 
