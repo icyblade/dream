@@ -15,11 +15,13 @@ def test_suit():
 def test_card():
     from dream.game.card import Card
 
-    card = Card('Tc')
+    card = Card('Ac')
 
-    assert repr(card) == 'Card(T♣)'
-    assert str(card) == 'Tc'
+    assert repr(card) == 'Card(A♣)'
+    assert str(card) == 'Ac'
 
-    assert card == Card('TC')
-    assert card != Card('Ts')
-    assert card != Card('Ac')
+    assert card == Card('AC')
+    assert card != Card('As')
+    assert card != Card('Tc')
+
+    assert card.to_numeric() == [12, 0]

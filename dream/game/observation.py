@@ -2,18 +2,39 @@ from .card import Card
 
 
 class Observation(object):
-    """Observation of Texas Hold'em
+    """Observation of Texas Hold'em."""
 
-    Parameters
-    --------
-    observation: str
-        Observation string.
-    """
-
-    def __init__(self, observation):
+    def __init__(self):
         self._board = None
         self._combo = None
         self._seat = None
+        self.raw = {'json': [], 'log': []}
+
+    def update_json(self, json):
+        self.raw['json'].append(json)
+        self._parse_json()
+
+    def update_log(self, log):
+        self.raw['log'].append(log)
+
+    def _parse_json(self):
+        if not self.raw['json']:
+            return
+
+        combo = list(map(
+            lambda x: Card(x),
+            self.raw['json'][-1]['playerAction']['player']['card'].split(' ')
+        ))
+        if self.combo is not None:
+            assert self.combo == combo
+        else:
+            self.combo = combo
+
+        seat = int(self.raw['json'][-1]['playerAction']['player']['position'])
+        if self.seat is not None:
+            assert self.seat == seat
+        else:
+            self.seat = seat
 
     @property
     def seat(self):
@@ -84,3 +105,13 @@ class Observation(object):
         assert isinstance(value, list) or isinstance(value, tuple)
         assert len(value) == 3
         self._board = list(map(lambda x: Card(x), value))
+
+    def to_numeric(self):
+        """Convert Observation to numeric values.
+
+        Used for label binarization.
+        """
+        result = [self.seat]
+        for i in self.combo:
+            result += i.to_numeric()
+        return result
