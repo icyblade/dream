@@ -7,7 +7,7 @@ from ..bluff import BaseBluff
 from ..game.observation import Observation
 from ..handcard import BaseHandCard
 from ..logger import build_logger
-from ..policy.return_call import ReturnCall
+from ..policy.regression_v2 import Regression as Policy
 from ..style import BaseStyle
 from ..value import BaseValue
 
@@ -37,7 +37,7 @@ class Agent(BaseAgent):
         self._socket = self._context.socket(zmq.REP)
         self._socket.bind(f'tcp://*:{port}')
 
-        self.policy = ReturnCall()
+        self.policy = Policy()
         self.value = BaseValue()
         self.style = BaseStyle()
         self.bluff = BaseBluff()

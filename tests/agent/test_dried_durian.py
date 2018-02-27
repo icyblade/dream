@@ -53,7 +53,7 @@ middleware_recv_true_message = [
         'RS': {
             'data': {
                 'playerAction': {
-                    'action': 'call'
+                    'action': 'raise 11'
                 }
             },
             'requestID': '15',
@@ -62,8 +62,8 @@ middleware_recv_true_message = [
     },
     {
         'RS': {
-            'errcode': 1,
-            'errmsg': ''
+            'errcode': 0,
+            'errmsg': 'Agent exits due to DELETE command.'
         }
     },
 ]
@@ -71,8 +71,8 @@ middleware_recv_true_message = [
 ai_true_message = [
     'Agent DriedDurian started, binding at tcp://*:41488.',
     'PLAYERACTION',
-    'Acting action: call.',
-    'call',
+    'Acting action: raise',
+    'raise',
     'DELETE',
     "'errcode': 0",
 ]
