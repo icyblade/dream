@@ -10,11 +10,11 @@ class Rank(MultiValueEnum):
     SEVEN = '7', 7
     EIGHT = '8', 8
     NINE = '9', 9
-    TEN = 'T', 10
-    JACK = 'J', 11
-    QUEEN = 'Q', 12
-    KING = 'K', 13
-    ACE = 'A', 1
+    TEN = 'T', '10', 10
+    JACK = 'J', 'j', 11
+    QUEEN = 'Q', 'q', 12
+    KING = 'K', 'k', 13
+    ACE = 'A', 'a', 1
 
     def __repr__(self):
         """repr.
@@ -35,10 +35,10 @@ class Rank(MultiValueEnum):
 
         Used for label binarization.
         """
-        if self.values[1] == 1:
+        if self.values[-1] == 1:
             return 12
         else:
-            return self.values[1] - 2
+            return self.values[-1] - 2
 
 
 class Suit(MultiValueEnum):
