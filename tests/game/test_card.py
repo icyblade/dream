@@ -23,5 +23,6 @@ def test_card():
     assert card == Card('AC')
     assert card != Card('As')
     assert card != Card('Tc')
+    assert card != Card('10c')
 
     assert card.to_numeric() == [12, 0]

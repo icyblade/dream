@@ -82,9 +82,9 @@ class Card(object):
         if isinstance(raw, Card):
             self.rank, self.suit = raw.rank, raw.suit
         else:
-            assert len(raw) == 2
+            assert len(raw) == 2 or (len(raw) == 3 and raw[0] == '1')
 
-            self.rank, self.suit = Rank(raw[0]), Suit(raw[1])
+            self.rank, self.suit = Rank(raw[:-1]), Suit(raw[-1])
 
     def __repr__(self):
         """repr.
