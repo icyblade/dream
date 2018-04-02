@@ -42,10 +42,10 @@ class Rank(MultiValueEnum):
 
 
 class Suit(MultiValueEnum):
-    CLUBS = '♣', 'c', 'C', 'clubs'
-    DIAMONDS = '♦', 'd', 'D', 'diamonds'
-    HEARTS = '♥', 'h', 'H', 'hearts'
-    SPADES = '♠', 's', 'S', 'spades'
+    CLUBS = '♣', 'c', 'C', 'clubs', 1
+    DIAMONDS = '♦', 'd', 'D', 'diamonds', 2
+    HEARTS = '♥', 'h', 'H', 'hearts', 3
+    SPADES = '♠', 's', 'S', 'spades', 4
 
     def __repr__(self):
         """repr.
