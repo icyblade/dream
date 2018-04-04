@@ -3,6 +3,7 @@ from ..game.card import Rank, Suit, Card
 from itertools import product
 from random import random
 
+
 class RandomModel(BaseHandCard):
     """Calculate hand card distribution randomly."""
 

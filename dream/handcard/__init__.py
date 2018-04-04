@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class BaseHandCard(object):
     """Abstract class of handcard function."""
 
