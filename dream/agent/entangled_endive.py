@@ -9,7 +9,7 @@ from ..bluff import BaseBluff
 from ..game.observation import Observation
 from ..handcard import BaseHandCard
 from ..logger import build_logger
-from ..policy.return_call import ReturnCall as Policy
+from ..policy.win_rate_based import WinRateBased as Policy
 from ..style import BaseStyle
 from ..value import BaseValue
 

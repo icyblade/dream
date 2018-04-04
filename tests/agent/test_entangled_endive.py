@@ -1,3 +1,6 @@
+import os
+
+
 upstream_send_message = [
     {
         'RQ': {
@@ -53,7 +56,7 @@ upstream_recv_message = [
         'RS': {
             'data': {
                 'playerAction': {
-                    'action': 'CALL'
+                    'action': 'RAISE 77.19834978068214'
                 }
             },
             'requestID': '15',
@@ -71,10 +74,10 @@ upstream_recv_message = [
 ai_message = [
     'Agent TestAgent started, binding at tcp://*:48546',
     "Receiving message: {'RQ': {'action': 'PLAYERACTION',",
-    'Acting action: CALL',
+    'Acting action:',
     (
         "Sending message: {'RS': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', "
-        "'data': {'playerAction': {'action': 'CALL'}}}}"
+        "'data': {'playerAction': {'action': 'RAISE 77.19834978068214'}}}}"
     ),
     "Receiving message: {'RQ': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', 'action': 'DELETE'}}",
     'SystemExit captured: Agent exits due to DELETE command',
@@ -109,35 +112,39 @@ def ai_thread(capsys, return_value):
 
     from dream.agent.entangled_endive import Agent
 
+    from random import seed
+
     agent = Agent('TestAgent', 48546, level=logging.DEBUG)
+    seed(0)
     agent.run()
 
     stdout, stderr = capsys.readouterr()
     return_value.extend(stderr.splitlines())
 
 
-def test_ai(capsys):
-    from time import sleep
-    from threading import Thread
+if 'TRAVIS' not in os.environ:
+    def test_ai(capsys):
+        from time import sleep
+        from threading import Thread
 
-    ai_return_value, upstream_return_value = [], []
+        ai_return_value, upstream_return_value = [], []
 
-    threads = [
-        Thread(target=ai_thread, args=(capsys, ai_return_value)),
-        Thread(target=upstream_thread, args=(upstream_return_value,)),
-    ]
+        threads = [
+            Thread(target=ai_thread, args=(capsys, ai_return_value)),
+            Thread(target=upstream_thread, args=(upstream_return_value,)),
+        ]
 
-    for i in threads:
-        i.daemon = True
-        i.start()
-        sleep(0.1)
-    for i in threads:
-        i.join(timeout=1)
+        for i in threads:
+            i.daemon = True
+            i.start()
+            sleep(0.1)
+        for i in threads:
+            i.join(timeout=10)
 
-    for exception in upstream_return_value:
-        raise exception
+        for exception in upstream_return_value:
+            raise exception
 
-    assert len(ai_message) == len(ai_return_value)
+        assert len(ai_message) == len(ai_return_value)
 
-    for return_value, pattern in zip(ai_return_value, ai_message):
-        assert return_value.find(pattern) != -1
+        for return_value, pattern in zip(ai_return_value, ai_message):
+            assert return_value.find(pattern) != -1
