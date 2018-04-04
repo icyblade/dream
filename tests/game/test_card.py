@@ -8,7 +8,7 @@ def test_rank():
 def test_suit():
     from dream.game.card import Suit
 
-    assert repr(Suit('c')) == 'Suit(♣)'
+    assert repr(Suit('c')) == 'Suit(c)'
     assert str(Suit('♣')) == 'c'
 
 
@@ -17,7 +17,7 @@ def test_card():
 
     card = Card('Ac')
 
-    assert repr(card) == 'Card(A♣)'
+    assert repr(card) == 'Card(Ac)'
     assert str(card) == 'Ac'
 
     assert card == Card('AC')
@@ -25,4 +25,4 @@ def test_card():
     assert card != Card('Tc')
     assert card != Card('10c')
 
-    assert card.to_numeric() == [12, 0]
+    assert card.to_numeric() == 156

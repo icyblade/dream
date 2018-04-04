@@ -2,24 +2,19 @@ import pytest
 
 
 def test_action():
-    from dream.game.action import Action
+    from dream.game.action import Action, BaseAction
 
-    assert Action('FOLD').action == 0.0
-    assert Action('CHECK').action == -1.0
-    assert Action('CALL').action == -2.0
-    assert Action('ALLIN').action == -3.0
-    assert Action('RAISE123').action == 123.0
-    assert Action('RAISE 123.1').action == 123.1
+    assert repr(Action('Fold')) == 'FOLD'
+    assert repr(Action('CHECK')) == 'CHECK'
+    assert repr(Action('call')) == 'CALL'
+    assert repr(Action('aLLiN')) == 'ALLIN'
+    assert repr(Action('RAISE123')) == 'RAISE 123.0'
+    assert repr(Action('RAISE 123.1')) == 'RAISE 123.1'
 
-    assert repr(Action('FOLD')) == 'fold'
-    assert repr(Action('CHECK')) == 'check'
-    assert repr(Action('CALL')) == 'call'
-    assert repr(Action('ALLIN')) == 'allin'
-    assert repr(Action('RAISE123')) == 'raise 123.0'
-    assert repr(Action('RAISE 123.1')) == 'raise 123.1'
+    assert Action('CALL').get_raise_value() is None
+    assert Action('RAISE 123').get_raise_value() == 123
+
+    assert Action(BaseAction('CALL')) == Action('call')
 
     with pytest.raises(ValueError):
-        Action('RAISE PANTS')
-
-    with pytest.raises(ValueError):
-        Action('FLOP THE TABLE')
+        Action(BaseAction('Raise'))

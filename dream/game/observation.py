@@ -18,9 +18,6 @@ class Observation(object):
         self.raw['log'].append(log)
 
     def _parse_json(self):
-        if not self.raw['json']:
-            return
-
         combo = list(map(
             lambda x: Card(x),
             self.raw['json'][-1]['playerAction']['player']['card'].split(' ')
@@ -113,5 +110,5 @@ class Observation(object):
         """
         result = [self.seat]
         for i in self.combo:
-            result += i.to_numeric()
+            result.append(i.to_numeric())
         return result

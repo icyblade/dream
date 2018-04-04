@@ -1,7 +1,7 @@
-pyzmq
+pyzmq>=16.0.3
 flask
 flask_sqlalchemy
 coloredlogs
-sklearn
-numpy
-aenum
+scikit-learn
+numpy>=1.13.3
+aenum>=2.0.9

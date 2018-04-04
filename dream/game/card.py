@@ -1,6 +1,7 @@
-from aenum import MultiValueEnum
+from aenum import MultiValueEnum, unique
 
 
+@unique
 class Rank(MultiValueEnum):
     DEUCE = '2', 2
     THREE = '3', 3
@@ -34,23 +35,25 @@ class Rank(MultiValueEnum):
         """Convert Rank to numeric values.
 
         Used for label binarization.
+
+        Todo
+        --------
+         - Use native members instead of hard-coded list.
         """
-        if self.values[-1] == 1:
-            return 12
-        else:
-            return self.values[-1] - 2
+        return ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'].index(self.value)
 
 
+@unique
 class Suit(MultiValueEnum):
-    CLUBS = '♣', 'c', 'C', 'clubs', 1
-    DIAMONDS = '♦', 'd', 'D', 'diamonds', 2
-    HEARTS = '♥', 'h', 'H', 'hearts', 3
-    SPADES = '♠', 's', 'S', 'spades', 4
+    CLUBS = 'c', '♣', 'C', 'clubs', 1
+    DIAMONDS = 'd', '♦', 'D', 'diamonds', 2
+    HEARTS = 'h', '♥', 'H', 'hearts', 3
+    SPADES = 's', '♠', 'S', 'spades', 4
 
     def __repr__(self):
         """repr.
 
-        For example: Suit(♣).
+        For example: Suit(c).
         """
         return f'Suit({self.value})'
 
@@ -59,14 +62,18 @@ class Suit(MultiValueEnum):
 
         For example: c.
         """
-        return self.values[1]
+        return self.value
 
     def to_numeric(self):
         """Convert Suit to numeric values.
 
         Used for label binarization.
+
+        Todo
+        --------
+         - Use native members instead of hard-coded list.
         """
-        return ['♣', '♦', '♥', '♠'].index(self.value)
+        return ['c', 'd', 'h', 's'].index(self.value)
 
 
 class Card(object):
@@ -82,14 +89,14 @@ class Card(object):
         if isinstance(raw, Card):
             self.rank, self.suit = raw.rank, raw.suit
         else:
-            assert len(raw) == 2 or (len(raw) == 3 and raw[0] == '1')
+            assert len(raw) == 2 or (len(raw) == 3 and raw[0] == '1')  # fix for something like 10c
 
             self.rank, self.suit = Rank(raw[:-1]), Suit(raw[-1])
 
     def __repr__(self):
         """repr.
 
-        For example: Card(T♣).
+        For example: Card(Tc).
         """
         return f'Card({self.rank.value}{self.suit.value})'
 
@@ -108,4 +115,4 @@ class Card(object):
 
         Used for label binarization.
         """
-        return [self.rank.to_numeric(), self.suit.to_numeric()]
+        return len(Rank) * self.rank.to_numeric() + self.suit.to_numeric()

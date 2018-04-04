@@ -29,7 +29,7 @@ def test_observation():
     ob.board = ['9s', '7s', '6h']
     assert ob.board == [Card('9s'), Card('7s'), Card('6h')]
 
-    assert ob.to_numeric() == [4, 2, 2, 10, 1]
+    assert ob.to_numeric() == [4, 28, 131]
 
     ob.update_json({
         'playerAction': {
@@ -49,3 +49,5 @@ def test_observation():
             'round': 'FLOP'
         }
     })
+
+    ob.update_log('SAMPLE_LOG')
