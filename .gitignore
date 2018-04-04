@@ -106,3 +106,4 @@ ENV/
 # project
 /config.json
 models/
+pokerai/  # Third-party library created by Guoyong Liu
