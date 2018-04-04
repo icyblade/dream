@@ -1,8 +1,8 @@
-from aenum import MultiValueEnum, unique
+from aenum import MultiValueEnum, unique, OrderedEnum
 
 
 @unique
-class Rank(MultiValueEnum):
+class Rank(MultiValueEnum, OrderedEnum):
     DEUCE = '2', 2
     THREE = '3', 3
     FOUR = '4', 4
@@ -44,7 +44,7 @@ class Rank(MultiValueEnum):
 
 
 @unique
-class Suit(MultiValueEnum):
+class Suit(MultiValueEnum, OrderedEnum):
     CLUBS = 'c', '♣', 'C', 'clubs', 1
     DIAMONDS = 'd', '♦', 'D', 'diamonds', 2
     HEARTS = 'h', '♥', 'H', 'hearts', 3
