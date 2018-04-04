@@ -28,9 +28,9 @@ upstream_send_message = [
                         'position': '4',
                         'userID': '2400'
                     },
-                    'pots': [{
+                    'pots': {
                         'pot': '0'
-                    }],
+                    },
                     'round': 'PREFLOP'
                 }
             },

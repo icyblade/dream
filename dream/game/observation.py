@@ -33,6 +33,9 @@ class Observation(object):
         else:
             self.seat = seat
 
+        self.pots = self.raw['json'][-1]['playerAction']['pots']
+        self.chips = self.raw['json'][-1]['playerAction']['player']['chips']
+
     @property
     def seat(self):
         """Get seat of current player.
@@ -102,6 +105,53 @@ class Observation(object):
         assert isinstance(value, list) or isinstance(value, tuple)
         assert len(value) == 3
         self._board = list(map(lambda x: Card(x), value))
+
+    @property
+    def pots(self):
+        """Get current pots.
+
+        Returns
+        --------
+        dict
+            Current pots, including side pots.
+        """
+        return self._pots
+
+    @pots.setter
+    def pots(self, value):
+        """Set current pots.
+
+        Parameters
+        --------
+        value: dict
+            Current pots. For example: `{'pot': 64}`.
+        """
+        self._pots = dict([
+            (key, float(value_))
+            for key, value_ in value.items()
+        ])
+
+    @property
+    def chips(self):
+        """Get chips of current player.
+
+        Returns
+        --------
+        float
+            Chips of current player.
+        """
+        return self._chips
+
+    @chips.setter
+    def chips(self, value):
+        """Set chips of current player.
+
+        Parameters
+        --------
+        value: float
+            Chips of current player to be set. For example: `10`.
+        """
+        self._chips = float(value)
 
     def to_numeric(self):
         """Convert Observation to numeric values.

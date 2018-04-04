@@ -15,9 +15,9 @@ def test_observation():
                 'position': '4',
                 'userID': '2400'
             },
-            'pots': [{
+            'pots': {
                 'pot': '0'
-            }],
+            },
             'round': 'PREFLOP'
         }
     })
@@ -31,6 +31,10 @@ def test_observation():
 
     assert ob.to_numeric() == [4, 28, 131]
 
+    assert ob.pots == {'pot': 0}
+
+    assert ob.chips == 2008
+
     ob.update_json({
         'playerAction': {
             'boardCards': 'As Kh Kc',
@@ -43,9 +47,9 @@ def test_observation():
                 'position': '4',
                 'userID': '2400'
             },
-            'pots': [{
+            'pots': {
                 'pot': '0'
-            }],
+            },
             'round': 'FLOP'
         }
     })
