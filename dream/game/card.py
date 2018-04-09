@@ -1,4 +1,4 @@
-from aenum import MultiValueEnum, unique, OrderedEnum
+from aenum import MultiValueEnum, OrderedEnum, unique
 
 
 @unique

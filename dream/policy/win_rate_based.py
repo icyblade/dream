@@ -5,6 +5,7 @@ except ImportError:
     raise ImportError('Third-party library pokerai created by Guoyong Liu is required for policy WinRateBased.')
 
 import numpy as np
+
 from . import BasePolicy
 from ..game.action import Action
 from ..handcard.random_model import RandomModel as HandCard

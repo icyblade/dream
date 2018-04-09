@@ -1,7 +1,8 @@
-from . import BaseHandCard
-from ..game.card import Rank, Suit, Card
 from itertools import product
 from random import random
+
+from . import BaseHandCard
+from ..game.card import Card, Rank, Suit
 
 
 class RandomModel(BaseHandCard):

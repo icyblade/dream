@@ -1,6 +1,6 @@
+import gc
 import logging
 import traceback
-import gc
 
 import zmq
 

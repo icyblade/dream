@@ -122,7 +122,7 @@ def ai_thread(capsys, return_value):
     return_value.extend(stderr.splitlines())
 
 
-if 'TRAVIS' not in os.environ:
+if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
     def test_ai(capsys):
         from time import sleep
         from threading import Thread
