@@ -7,6 +7,7 @@ from .player import Player
 
 
 class Parser(object):
+    _valid_game_rounds = {}
 
     def __init__(self, log):
         self.log = log
@@ -22,7 +23,8 @@ class Parser(object):
         self.players = []
         self._game_rounds = {}
         self.current_handcard = None
-        self.actions = {'preflop': []}
+        self.actions = dict([(round, []) for round in self._valid_game_rounds])
+        self.community_cards = []
 
         self._parse()
 
@@ -59,11 +61,12 @@ class Parser(object):
 
         raise ValueError(f'Invalid player.')
 
-    def get_game_round(self, name):
-        if name not in {'preflop', 'flop', 'turn', 'river', 'show down', 'summary'}:
-            raise ValueError(f'Invalid game round name: {name}')
+    def get_actions(self, game_round):
+        if game_round not in self._valid_game_rounds:
+            raise ValueError(f'Invalid game round name: {game_round}')
+
         try:
-            return self._game_rounds[name]
+            return self.actions[game_round]
         except KeyError:
             return None
 
@@ -82,11 +85,14 @@ class PokerStars(Parser):
     """, re.X)
     _seat_regex = re.compile(r"Seat (?P<seat_id>\d+)\: (?P<player_name>\S+) \(\S(?P<chips>[\d.]+) in chips\)")
     _game_rounds_regex = re.compile(r"\*\*\* (?P<round_name>.+?) \*\*\*")
-    _handcard_regex = re.compile(r"Dealt to (?P<player_name>.+?) \[(?P<handcard>.{5})\]")
-    _action_regex = re.compile(r"(?P<player_name>.+?)\: (?P<action>.+)")
 
+    _action_regex = re.compile(r"(?P<player_name>.+?)\: (?P<action>.+)")
     _raise_regex = re.compile(r"raises .(?P<raise_from>[\d.]+) to .(?P<raise_to>[\d.]+)")
+    _bet_regex = re.compile(r"bets .(?P<raise_to>[\d.]+)")
     _allin_regex = re.compile(r".*? and is all-in")
+
+    _handcard_regex = re.compile(r"Dealt to (?P<player_name>.+?) \[(?P<handcard>.{5})\]")
+    _flop_card_regex = re.compile(r"\[(?P<cards>.{8})\]")
 
     _log_attributes = {
         'log_id': int,
@@ -100,6 +106,8 @@ class PokerStars(Parser):
         'seat_id': int,
         'chips': float,
     }
+
+    _valid_game_rounds = {'preflop', 'flop', 'turn', 'river', 'show down', 'summary'}
 
     def __init__(self, log):
         super(PokerStars, self).__init__(log=log)
@@ -154,6 +162,7 @@ class PokerStars(Parser):
                     self._game_rounds[current_round] = text
 
         self._parse_game_round_preflop()
+        self._parse_game_round_flop()
 
     def _parse_game_round_preflop(self):
         log = self._game_rounds['preflop']
@@ -172,6 +181,19 @@ class PokerStars(Parser):
             action = self._load_action_from_string(action_string)
             self.actions['preflop'].append((player, action))
 
+    def _parse_game_round_flop(self):
+        log = self._game_rounds['flop']
+        regex_result = self._flop_card_regex.search(log)
+        self.community_cards = list(map(
+            lambda x: Card(x),
+            regex_result.group('cards').split(' ')
+        ))
+
+        for player_name, action_string in self._action_regex.findall(log):
+            player = self.get_player(player_name=player_name)
+            action = self._load_action_from_string(action_string)
+            self.actions['flop'].append((player, action))
+
     def _load_action_from_string(self, string):
         """Convert raw log string to Action."""
         if self._allin_regex.search(string) is not None:
@@ -184,6 +206,10 @@ class PokerStars(Parser):
             return Action('FOLD')
         elif string.startswith('raises'):
             regex_result = self._raise_regex.search(string)
+            value = regex_result.group('raise_to')
+            return Action(f'RAISE {value}')
+        elif string.startswith('bets'):
+            regex_result = self._bet_regex.search(string)
             value = regex_result.group('raise_to')
             return Action(f'RAISE {value}')
         else:
