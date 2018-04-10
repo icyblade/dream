@@ -52,6 +52,8 @@ Seat 6: heffalump75 folded before Flop (didn't bet)"""
 def test_pokerstars():
     from datetime import datetime
     from dream.game.log_parser import PokerStars
+    from dream.game.card import Card
+    from dream.game.action import Action
 
     game = PokerStars(log=pokerstars_test_log)
     assert game.log_id == 124959928530
@@ -72,3 +74,17 @@ def test_pokerstars():
 
     assert game.get_player(seat_id=4).player_name == 'Rednaxela747'
     assert game.get_player(player_name='bmlm').seat_id == 5
+    assert set(game._game_rounds.keys()).issubset({
+        'preflop', 'flop', 'turn', 'river', 'show down', 'summary'
+    })
+
+    assert game.current_player.player_name == 'bmlm'
+    assert game.current_handcard == [Card('Kh'), Card('4h')]
+    assert game.actions['preflop'] == [
+        (game.get_player(player_name='heffalump75'), Action('FOLD')),
+        (game.get_player(player_name='zazano'), Action('FOLD')),
+        (game.get_player(player_name='jinmay'), Action('FOLD')),
+        (game.get_player(player_name='davidtan23'), Action('FOLD')),
+        (game.get_player(player_name='Rednaxela747'), Action('RAISE 60.8')),
+        (game.get_player(player_name='bmlm'), Action('CALL')),
+    ]
