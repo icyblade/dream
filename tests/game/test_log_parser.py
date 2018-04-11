@@ -55,6 +55,7 @@ def test_pokerstars():
     from dream.game.card import Card
 
     game = PokerStars(log=pokerstars_test_log)
+
     assert game.log_id == 124959928530
     assert game.small_blind == 10
     assert game.big_blind == 20

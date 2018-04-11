@@ -155,7 +155,7 @@ class PokerStars(Parser):
                 pass
 
         # parse table
-                regex_results = self._table_regex.search(self.log)
+        regex_results = self._table_regex.search(self.log)
         for value, cast_function in self._log_attributes.items():
             try:
                 setattr(self, value, cast_function(regex_results.group(value)))
