@@ -101,6 +101,11 @@ class Action(object):
         """Multiplication of this RAISE.
 
         Generally equals to raise_to / raise_from.
+
+        Returns
+        --------
+        float
+            None will be returned if the action is not RAISE.
         """
         if self.raise_from is not None and self.raise_to is not None:
             return self.raise_to / self.raise_from

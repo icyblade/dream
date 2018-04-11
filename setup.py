@@ -1,9 +1,9 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(
     name='dream',
     version='0.1.0',
-    packages=find_packages(exclude=['tests', 'examples', 'docs']),
+    packages=['dream'],
     url='https://github.com/icyblade/dream',
     license='MIT',
     author='Icyblade Dai',
