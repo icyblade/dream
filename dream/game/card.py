@@ -77,7 +77,7 @@ class Suit(MultiValueEnum, OrderedEnum):
 
 
 class Card(object):
-    """Abstract class of card of Texas Hold'em.
+    """Abstract class of Texas Hold'em card.
 
     Parameters
     --------
