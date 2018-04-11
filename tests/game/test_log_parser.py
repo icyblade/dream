@@ -112,7 +112,6 @@ if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
         import pickle
         import multiprocessing
         from multiprocessing import Process
-        from dream.game.log_parser import PokerStars
 
         jobs = 8
         multiprocessing.set_start_method('forkserver')
