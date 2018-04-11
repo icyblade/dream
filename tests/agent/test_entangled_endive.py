@@ -56,7 +56,7 @@ upstream_recv_message = [
         'RS': {
             'data': {
                 'playerAction': {
-                    'action': 'RAISE 77.19834978068214'
+                    'action': 'RAISE 45.14152036139089'
                 }
             },
             'requestID': '15',
@@ -77,7 +77,7 @@ ai_message = [
     'Acting action:',
     (
         "Sending message: {'RS': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', "
-        "'data': {'playerAction': {'action': 'RAISE 77.19834978068214'}}}}"
+        "'data': {'playerAction': {'action': 'RAISE 45.14152036139089'}}}}"
     ),
     "Receiving message: {'RQ': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', 'action': 'DELETE'}}",
     'SystemExit captured: Agent exits due to DELETE command',
@@ -139,7 +139,7 @@ if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
             i.start()
             sleep(0.1)
         for i in threads:
-            i.join(timeout=20)
+            i.join(timeout=10)
 
         for exception in upstream_return_value:
             raise exception
