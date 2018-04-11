@@ -6,5 +6,5 @@ def test_random_model():
 
     proba = handcard.predict_proba(None, None)
 
-    assert len(proba) == 52 * 51 / 2
+    assert len(proba) == handcard.sample_size
     assert np.isclose(sum((value for key, value in proba)), 1)
