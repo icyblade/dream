@@ -106,7 +106,7 @@ class PokerStars(Parser):
         \#(?P<log_id>\d+)
         :\s*
         Hold'em\s*No\s*Limit\s*
-        \(\S(?P<small_blind>\d+)/\S(?P<big_blind>\d+)\s*(?P<currency>\S+)\)
+        \(\S(?P<small_blind>[\d\.]+)/\S(?P<big_blind>[\d\.]+)\s*(?P<currency>\S*?)\)
         \s*-\s*(?P<time>[\d/: ]+?)\s*ET
     """, re.X)
     _table_regex = re.compile(r"""
@@ -199,6 +199,9 @@ class PokerStars(Parser):
 
     def _parse_game_round_preflop(self):
         log = self._game_rounds['preflop']
+        if log is None:
+            return
+
         regex_result = self._handcard_regex.search(log)
         player_name = regex_result.group('player_name')
         player = self.get_player(player_name=player_name)
@@ -214,6 +217,9 @@ class PokerStars(Parser):
 
     def _parse_game_round_flop(self):
         log = self._game_rounds['flop']
+        if log is None:
+            return
+
         regex_result = self._flop_card_regex.search(log)
         self.community_cards = list(map(
             lambda x: Card(x),
@@ -225,6 +231,9 @@ class PokerStars(Parser):
 
     def _parse_game_round_turn(self):
         log = self._game_rounds['turn']
+        if log is None:
+            return
+
         regex_result = self._turn_card_regex.search(log)
         self.community_cards.append(Card(regex_result.group('turn_card')))
 
@@ -233,6 +242,9 @@ class PokerStars(Parser):
 
     def _parse_game_round_river(self):
         log = self._game_rounds['river']
+        if log is None:
+            return
+
         regex_result = self._river_card_regex.search(log)
         self.community_cards.append(Card(regex_result.group('river_card')))
 
@@ -245,8 +257,9 @@ class PokerStars(Parser):
             action = self._load_action_from_string(action_string)
             yield player, action
 
-    def _load_action_from_string(self, string):
+    def _load_action_from_string(self, string: str):
         """Convert raw log string to Action."""
+        string = string.strip()
         if self._allin_regex.search(string) is not None:
             return Action('ALLIN')
         elif string.startswith('calls'):
@@ -267,5 +280,7 @@ class PokerStars(Parser):
             raise_to = regex_result.group('raise_to')
             action = Action(f'RAISE {raise_to}')
             return action
+        elif string == 'doesn\'t show hand':
+            pass
         else:
             raise ValueError(f'Invalid action from string: {string}.')
