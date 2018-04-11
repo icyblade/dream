@@ -37,7 +37,8 @@ class Action(object):
     """
     def __init__(self, action):
         self._action = None
-        self._value = None
+        self._value = None  # raise to
+        self._base_value = None  # raise from
 
         if isinstance(action, str):
             self._parse_action_from_string(action)
@@ -63,11 +64,31 @@ class Action(object):
         else:
             return str(self._action)
 
-    def get_raise_value(self):
+    def __eq__(self, other):
+        return self._action == other._action and self._value == other._value and self._base_value == other._base_value
+
+    @property
+    def raise_to(self):
         if self._action == BASE_ACTION_RAISE:
             return self._value
         else:
             return None
 
-    def __eq__(self, other):
-        return self._action == other._action and self._value == other._value
+    @property
+    def raise_from(self):
+        if self._action == BASE_ACTION_RAISE:
+            return self._base_value
+        else:
+            return None
+
+    @raise_from.setter
+    def raise_from(self, value):
+        if self._action == BASE_ACTION_RAISE:
+            self._base_value = value
+        else:
+            raise Exception(f'Base action type should be RAISE, {self._action} found.')
+
+    @property
+    def raise_mult(self):
+        if self.raise_from is not None and self.raise_to is not None:
+            return self.raise_to / self.raise_from

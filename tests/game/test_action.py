@@ -11,10 +11,21 @@ def test_action():
     assert repr(Action('RAISE123')) == 'RAISE 123.0'
     assert repr(Action('RAISE 123.1')) == 'RAISE 123.1'
 
-    assert Action('CALL').get_raise_value() is None
-    assert Action('RAISE 123').get_raise_value() == 123
+    assert Action('CALL').raise_to is None
+    assert Action('RAISE 123').raise_to == 123
 
     assert Action(BaseAction('CALL')) == Action('call')
 
     with pytest.raises(ValueError):
         Action(BaseAction('Raise'))
+
+    action = Action('RAISE 123')
+    action.raise_from = 100
+    assert action.raise_from == 100
+    assert action.raise_to == 123
+    assert action.raise_mult == 1.23
+
+    action = Action('CALL')
+    with pytest.raises(Exception):
+        action.raise_from = 100
+    assert action.raise_from is None
