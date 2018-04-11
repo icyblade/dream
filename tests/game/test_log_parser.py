@@ -80,7 +80,7 @@ def test_pokerstars():
 
     assert game.current_player.player_name == 'bmlm'
     assert game.current_handcard == [Card('Kh'), Card('4h')]
-    assert game.get_actions('preflop') == [
+    assert game.get_actions(game_round='preflop') == [
         (game.get_player(player_name='heffalump75'), Action('FOLD')),
         (game.get_player(player_name='zazano'), Action('FOLD')),
         (game.get_player(player_name='jinmay'), Action('FOLD')),
@@ -90,8 +90,17 @@ def test_pokerstars():
     ]
 
     assert game.community_cards == [Card('Jh'), Card('2h'), Card('3s')]
-    assert game.get_actions('flop') == [
+    assert game.get_actions(game_round='flop') == [
         (game.get_player(player_name='Rednaxela747'), Action('CHECK')),
         (game.get_player(player_name='bmlm'), Action('RAISE 79.06')),
         (game.get_player(player_name='Rednaxela747'), Action('CALL')),
+    ]
+
+    assert game.get_actions(player_name='bmlm') == [
+        (game.get_player(player_name='bmlm'), Action('CALL')),
+        (game.get_player(player_name='bmlm'), Action('RAISE 79.06')),
+    ]
+
+    assert game.get_actions(player_name='bmlm', game_round='flop') == [
+        (game.get_player(player_name='bmlm'), Action('RAISE 79.06')),
     ]

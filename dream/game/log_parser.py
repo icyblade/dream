@@ -1,5 +1,7 @@
 import re
+from collections import OrderedDict
 from datetime import datetime
+from itertools import chain
 
 from .action import Action
 from .card import Card
@@ -21,9 +23,9 @@ class Parser(object):
         self.max_players = None
         self.button = None
         self.players = []
-        self._game_rounds = {}
+        self._game_rounds = OrderedDict([(round, None) for round in self._valid_game_rounds])
         self.current_handcard = None
-        self.actions = dict([(round, []) for round in self._valid_game_rounds])
+        self.actions = OrderedDict([(round, []) for round in self._valid_game_rounds])
         self.community_cards = []
 
         self._parse()
@@ -61,14 +63,41 @@ class Parser(object):
 
         raise ValueError(f'Invalid player.')
 
-    def get_actions(self, game_round):
-        if game_round not in self._valid_game_rounds:
+    def get_actions(self, game_round=None, player_name=None, seat_id=None):
+        """Extract actions based on some filters.
+
+        Parameters
+        --------
+        game_round: str or None
+            Game round to be extracted. If None, actions from all game rounds will be extracted.
+        player_name: str or None
+            Player to be extracted. If None, actions from all players will be extracted.
+        seat_id: int or None
+            Seat to be extracted. If None, actions from all seats will be extracted.
+
+        Returns
+        --------
+        list of tuple
+            List of (ordered) tuple like (dream.game.player.Player, dream.game.action.Action), presenting action series.
+        """
+        if game_round is not None and game_round not in self._valid_game_rounds:
             raise ValueError(f'Invalid game round name: {game_round}')
 
-        try:
-            return self.actions[game_round]
-        except KeyError:
-            return None
+        if game_round is not None:
+            action_series = self.actions[game_round]
+        else:
+            action_series = chain(*self.actions.values())
+
+        if player_name is not None or seat_id is not None:
+            player_expected = self.get_player(player_name=player_name, seat_id=seat_id)
+
+            action_series = [
+                (player, action)
+                for player, action in action_series
+                if player == player_expected
+            ]
+
+        return action_series
 
 
 class PokerStars(Parser):
@@ -107,7 +136,7 @@ class PokerStars(Parser):
         'chips': float,
     }
 
-    _valid_game_rounds = {'preflop', 'flop', 'turn', 'river', 'show down', 'summary'}
+    _valid_game_rounds = ['preflop', 'flop', 'turn', 'river', 'show down', 'summary']
 
     def __init__(self, log):
         super(PokerStars, self).__init__(log=log)
@@ -206,11 +235,15 @@ class PokerStars(Parser):
             return Action('FOLD')
         elif string.startswith('raises'):
             regex_result = self._raise_regex.search(string)
-            value = regex_result.group('raise_to')
-            return Action(f'RAISE {value}')
+            raise_to = regex_result.group('raise_to')
+            raise_from = regex_result.group('raise_from')
+            action = Action(f'RAISE {raise_to}')
+            action.raise_from = raise_from
+            return action
         elif string.startswith('bets'):
             regex_result = self._bet_regex.search(string)
-            value = regex_result.group('raise_to')
-            return Action(f'RAISE {value}')
+            raise_to = regex_result.group('raise_to')
+            action = Action(f'RAISE {raise_to}')
+            return action
         else:
             raise ValueError(f'Invalid action from string: {string}.')
