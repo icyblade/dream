@@ -139,7 +139,7 @@ if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
             i.start()
             sleep(0.1)
         for i in threads:
-            i.join(timeout=10)
+            i.join(timeout=20)
 
         for exception in upstream_return_value:
             raise exception
