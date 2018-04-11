@@ -1,4 +1,4 @@
-pokerstars_test_log = """PokerStars Hand #124959928530:  Hold'em No Limit ($10/$20 USD) - 2014/11/12 8:26:34 ET
+pokerstars_test_log = """PokerStars Hand #124959928530:  Hold'em No Limit ($10.00/$20.00 USD) - 2014/11/12 8:26:34 ET
 Table 'Grus II' 6-max Seat #3 is the button
 Seat 1: zazano ($2391 in chips)
 Seat 2: jinmay ($7997.07 in chips)
@@ -15,6 +15,7 @@ zazano: folds
 jinmay: folds
 davidtan23: folds
 davidtan23 said, "haha yea thats true, anyway i cant either, since sg going to ban online gambling soon"
+davidtan23 said, "unittest: test for colon bypass"
 Rednaxela747: raises $40.80 to $60.80
 bmlm: calls $40.80
 *** FLOP *** [Jh 2h 3s]

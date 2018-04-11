@@ -116,6 +116,7 @@ class PokerStars(Parser):
     _game_rounds_regex = re.compile(r"\*\*\* (?P<round_name>.+?) \*\*\*")
 
     _action_regex = re.compile(r"(?P<player_name>.+?): (?P<action>.+)")
+    _chat_regex = re.compile(r'(?P<player_name>.+?) said, "(?P<message>.*?)"')
     _raise_regex = re.compile(r"raises .(?P<raise_from>[\d.]+) to .(?P<raise_to>[\d.]+)")
     _bet_regex = re.compile(r"bets .(?P<raise_to>[\d.]+)")
     _allin_regex = re.compile(r".*? and is all-in")
@@ -251,11 +252,15 @@ class PokerStars(Parser):
         for player, action in self._parse_actions(log):
             self.actions['river'].append((player, action))
 
-    def _parse_actions(self, log):
-        for player_name, action_string in self._action_regex.findall(log):
-            player = self.get_player(player_name=player_name)
-            action = self._load_action_from_string(action_string)
-            yield player, action
+    def _parse_actions(self, log: str):
+        for line in log.splitlines():
+            regex_result = self._action_regex.search(line)
+            if regex_result is not None and self._chat_regex.search(line) is None:
+                player = self.get_player(player_name=regex_result.group('player_name'))
+                action = self._load_action_from_string(regex_result.group('action'))
+
+                if action is not None:
+                    yield player, action
 
     def _load_action_from_string(self, string: str):
         """Convert raw log string to Action."""
@@ -264,9 +269,9 @@ class PokerStars(Parser):
             return Action('ALLIN')
         elif string.startswith('calls'):
             return Action('CALL')
-        elif string == 'checks':
+        elif string.startswith('checks'):
             return Action('CHECK')
-        elif string == 'folds':
+        elif string.startswith('folds'):
             return Action('FOLD')
         elif string.startswith('raises'):
             regex_result = self._raise_regex.search(string)
@@ -280,6 +285,8 @@ class PokerStars(Parser):
             raise_to = regex_result.group('raise_to')
             action = Action(f'RAISE {raise_to}')
             return action
+        elif string.startswith('shows'):
+            pass
         elif string == 'doesn\'t show hand':
             pass
         else:
