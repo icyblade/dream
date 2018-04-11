@@ -12,7 +12,7 @@ class BaseAgent(object):
     def in_game(self):
         """Is current Agent in game or not."""
 
-        pass
+        return
 
     def run(self):
         pass

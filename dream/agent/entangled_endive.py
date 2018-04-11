@@ -173,7 +173,8 @@ class Agent(BaseAgent):
                 self.send_exception(e)
                 continue
 
-    def _validate_message(self, msg):
+    @staticmethod
+    def _validate_message(msg):
         """Validate message.
 
         Parameters
@@ -189,7 +190,8 @@ class Agent(BaseAgent):
         if 'RQ' not in msg or 'token' not in msg['RQ'] or 'requestID' not in msg['RQ']:
             raise ValueError('Invalid message.')
 
-    def _get_message_type(self, msg):
+    @staticmethod
+    def _get_message_type(msg):
         """Determine incoming JSON message type.
 
         Parameters

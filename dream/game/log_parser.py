@@ -23,9 +23,9 @@ class Parser(object):
         self.max_players = None
         self.button = None
         self.players = []
-        self._game_rounds = OrderedDict([(round, None) for round in self._valid_game_rounds])
+        self._game_rounds = OrderedDict([(game_round, None) for game_round in self._valid_game_rounds])
         self.current_handcard = None
-        self.actions = OrderedDict([(round, []) for round in self._valid_game_rounds])
+        self.actions = OrderedDict([(game_round, []) for game_round in self._valid_game_rounds])
         self.community_cards = []
 
         self._parse()
@@ -104,18 +104,18 @@ class PokerStars(Parser):
     _header_regex = re.compile(r"""
         PokerStars\s*(Zoom)?\s*Hand\s*
         \#(?P<log_id>\d+)
-        \:\s*
+        :\s*
         Hold'em\s*No\s*Limit\s*
         \(\S(?P<small_blind>\d+)/\S(?P<big_blind>\d+)\s*(?P<currency>\S+)\)
-        \s*\-\s*(?P<time>[\d/: ]+?)\s*ET
+        \s*-\s*(?P<time>[\d/: ]+?)\s*ET
     """, re.X)
     _table_regex = re.compile(r"""
-        Table\s*'(?P<table_name>.+?)'\s*(?P<max_players>\d+)\-max\s*Seat\s*\#(?P<button>\d+)\s*is\s*the\s*button
+        Table\s*'(?P<table_name>.+?)'\s*(?P<max_players>\d+)-max\s*Seat\s*\#(?P<button>\d+)\s*is\s*the\s*button
     """, re.X)
-    _seat_regex = re.compile(r"Seat (?P<seat_id>\d+)\: (?P<player_name>\S+) \(\S(?P<chips>[\d.]+) in chips\)")
+    _seat_regex = re.compile(r"Seat (?P<seat_id>\d+): (?P<player_name>\S+) \(\S(?P<chips>[\d.]+) in chips\)")
     _game_rounds_regex = re.compile(r"\*\*\* (?P<round_name>.+?) \*\*\*")
 
-    _action_regex = re.compile(r"(?P<player_name>.+?)\: (?P<action>.+)")
+    _action_regex = re.compile(r"(?P<player_name>.+?): (?P<action>.+)")
     _raise_regex = re.compile(r"raises .(?P<raise_from>[\d.]+) to .(?P<raise_to>[\d.]+)")
     _bet_regex = re.compile(r"bets .(?P<raise_to>[\d.]+)")
     _allin_regex = re.compile(r".*? and is all-in")

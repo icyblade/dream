@@ -8,6 +8,8 @@ class Observation(object):
         self._board = None
         self._combo = None
         self._seat = None
+        self._pots = {}
+        self._chips = None
         self.raw = {'json': [], 'log': []}
 
     def update_json(self, json):
