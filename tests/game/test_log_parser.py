@@ -1,3 +1,6 @@
+import os
+
+
 pokerstars_test_log = """PokerStars Hand #124959928530:  Hold'em No Limit ($10.00/$20.00 USD) - 2014/11/12 8:26:34 ET
 Table 'Grus II' 6-max Seat #3 is the button
 Seat 1: zazano ($2391 in chips)
@@ -91,3 +94,44 @@ def test_pokerstars():
         ']'
     )
     assert len(game.get_actions(player_name='Rednaxela747')) == 7
+
+    assert game.winner.player_name == 'bmlm'
+
+
+if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
+    def mini_batch(batch):
+        from dream.game.log_parser import PokerStars
+        for log in batch:
+            PokerStars(log)
+
+    def test_pokerstars_full():
+        """Full PokerStars log simulation.
+
+        This test will costs about 2 minutes at a 8-core machines.
+        """
+        import pickle
+        import multiprocessing
+        from multiprocessing import Process
+        from dream.game.log_parser import PokerStars
+
+        jobs = 8
+        multiprocessing.set_start_method('forkserver')
+
+        with open('/data/datasets/texas_holdem/data.pickle', 'rb') as f:
+            data = pickle.load(f)
+
+        full_batch_size = len(data)
+        batch_size = full_batch_size // jobs
+
+        processes = []
+        for job_id in range(jobs):
+            if job_id != jobs - 1:
+                process = Process(target=mini_batch, args=(data[job_id*batch_size:(job_id+1)*batch_size],))
+            else:
+                process = Process(target=mini_batch, args=(data[job_id*batch_size:],))
+            process.daemon = True
+            process.start()
+            processes.append(process)
+
+        for process in processes:
+            process.join()

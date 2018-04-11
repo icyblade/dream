@@ -27,6 +27,7 @@ class Parser(object):
         self.current_handcard = None
         self.actions = OrderedDict([(game_round, []) for game_round in self._valid_game_rounds])
         self.community_cards = []
+        self.winner = None
 
         self._parse()
 
@@ -125,6 +126,7 @@ class PokerStars(Parser):
     _flop_card_regex = re.compile(r"\[(?P<cards>.{8})\]")
     _turn_card_regex = re.compile(r"\[(?P<cards>.{8})\] \[(?P<turn_card>.{2})\]")
     _river_card_regex = re.compile(r"\[(?P<cards>.{11})\] \[(?P<river_card>.{2})\]")
+    _main_pot_regex = re.compile(r"(?P<player_name>.+?) collected \S(?P<pot>[\d\.]+) from (main )?pot")
 
     _log_attributes = {
         'log_id': int,
@@ -197,6 +199,10 @@ class PokerStars(Parser):
         self._parse_game_round_flop()
         self._parse_game_round_turn()
         self._parse_game_round_river()
+
+        # parse winner
+        regex_results = self._main_pot_regex.search(self.log)
+        self.winner = self.get_player(player_name=regex_results.group('player_name'))
 
     def _parse_game_round_preflop(self):
         log = self._game_rounds['preflop']
