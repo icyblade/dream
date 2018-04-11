@@ -122,6 +122,8 @@ class PokerStars(Parser):
 
     _handcard_regex = re.compile(r"Dealt to (?P<player_name>.+?) \[(?P<handcard>.{5})\]")
     _flop_card_regex = re.compile(r"\[(?P<cards>.{8})\]")
+    _turn_card_regex = re.compile(r"\[(?P<cards>.{8})\] \[(?P<turn_card>.{2})\]")
+    _river_card_regex = re.compile(r"\[(?P<cards>.{11})\] \[(?P<river_card>.{2})\]")
 
     _log_attributes = {
         'log_id': int,
@@ -192,6 +194,8 @@ class PokerStars(Parser):
 
         self._parse_game_round_preflop()
         self._parse_game_round_flop()
+        self._parse_game_round_turn()
+        self._parse_game_round_river()
 
     def _parse_game_round_preflop(self):
         log = self._game_rounds['preflop']
@@ -205,9 +209,7 @@ class PokerStars(Parser):
             regex_result.group('handcard').split(' ')
         ))
 
-        for player_name, action_string in self._action_regex.findall(log):
-            player = self.get_player(player_name=player_name)
-            action = self._load_action_from_string(action_string)
+        for player, action in self._parse_actions(log):
             self.actions['preflop'].append((player, action))
 
     def _parse_game_round_flop(self):
@@ -218,10 +220,30 @@ class PokerStars(Parser):
             regex_result.group('cards').split(' ')
         ))
 
+        for player, action in self._parse_actions(log):
+            self.actions['flop'].append((player, action))
+
+    def _parse_game_round_turn(self):
+        log = self._game_rounds['turn']
+        regex_result = self._turn_card_regex.search(log)
+        self.community_cards.append(Card(regex_result.group('turn_card')))
+
+        for player, action in self._parse_actions(log):
+            self.actions['turn'].append((player, action))
+
+    def _parse_game_round_river(self):
+        log = self._game_rounds['river']
+        regex_result = self._river_card_regex.search(log)
+        self.community_cards.append(Card(regex_result.group('river_card')))
+
+        for player, action in self._parse_actions(log):
+            self.actions['river'].append((player, action))
+
+    def _parse_actions(self, log):
         for player_name, action_string in self._action_regex.findall(log):
             player = self.get_player(player_name=player_name)
             action = self._load_action_from_string(action_string)
-            self.actions['flop'].append((player, action))
+            yield player, action
 
     def _load_action_from_string(self, string):
         """Convert raw log string to Action."""
