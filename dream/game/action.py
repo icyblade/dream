@@ -31,11 +31,13 @@ class Action(object):
 
     Parameters
     --------
-    action: str.
+    action: str
         Raw action string. One of FOLD, CALL, CHECK, ALLIN, RAISE <quantity>.
         For example: RAISE 100 means the player raises to $100.
+    raise_from: float
+        Optional, specify raise_from value if action is RAISE.
     """
-    def __init__(self, action):
+    def __init__(self, action, raise_from=None):
         self._action = None
         self._value = None  # raise to
         self._base_value = None  # raise from
@@ -46,6 +48,9 @@ class Action(object):
             self._parse_action_from_base_action(action)
         else:
             raise ValueError(f'Invalid action found: {action}.')
+
+        if raise_from is not None:
+            self.raise_from = float(raise_from)
 
     def _parse_action_from_string(self, action_string):
         action_type = action_string.strip().upper()
@@ -60,12 +65,15 @@ class Action(object):
 
     def __repr__(self):
         if self._action == BASE_ACTION_RAISE:
-            return f'RAISE {self._value}'
+            if self.raise_from is None:
+                return f'RAISE {self.raise_to}'
+            else:
+                return f'RAISE {self.raise_to} from {self.raise_from}'
         else:
             return str(self._action)
 
     def __eq__(self, other):
-        return self._action == other._action and self._value == other._value and self._base_value == other._base_value
+        return self._action == other._action and self.raise_from == other.raise_from and self.raise_to == other.raise_to
 
     @property
     def raise_to(self):
