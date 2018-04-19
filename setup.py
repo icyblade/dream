@@ -1,5 +1,10 @@
 from setuptools import setup
 
+tests_require = [
+    'pytest>=3.5.0',
+    'pytest-flake8>=1.0.0',
+]
+
 setup(
     name='dream',
     version='0.1.0',
@@ -10,10 +15,10 @@ setup(
         'numpy>=1.13.3',
         'aenum>=2.0.9',
     ],
-    tests_require=[
-        'pytest>=3.5.0',
-        'pytest-flake8>=1.0.0',
-    ],
+    tests_require=tests_require,
+    extras={
+        'test': tests_require,
+    },
     url='https://github.com/icyblade/dream',
     license='MIT',
     author='Icyblade Dai',
