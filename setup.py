@@ -16,7 +16,7 @@ setup(
         'aenum>=2.0.9',
     ],
     tests_require=tests_require,
-    extras={
+    extras_require={
         'test': tests_require,
     },
     url='https://github.com/icyblade/dream',
