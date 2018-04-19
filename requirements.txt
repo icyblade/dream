@@ -1,4 +1,0 @@
-pyzmq>=16.0.3
-scikit-learn>=0.19.1
-numpy>=1.13.3
-aenum>=2.0.9

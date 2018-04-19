@@ -107,7 +107,7 @@ def upstream_thread(return_value, ip='127.0.0.1'):
         return_value.append(e)
 
 
-def ai_thread(capsys, return_value):
+def ai_thread(caplog, return_value):
     import logging
 
     from dream.agent.entangled_endive import Agent
@@ -118,19 +118,18 @@ def ai_thread(capsys, return_value):
     seed(0)
     agent.run()
 
-    stdout, stderr = capsys.readouterr()
-    return_value.extend(stderr.splitlines())
+    return_value.extend([rec.message for rec in caplog.records])
 
 
 if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
-    def test_ai(capsys):
+    def test_ai(caplog):
         from time import sleep
         from threading import Thread
 
         ai_return_value, upstream_return_value = [], []
 
         threads = [
-            Thread(target=ai_thread, args=(capsys, ai_return_value)),
+            Thread(target=ai_thread, args=(caplog, ai_return_value)),
             Thread(target=upstream_thread, args=(upstream_return_value,)),
         ]
 

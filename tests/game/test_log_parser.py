@@ -107,7 +107,7 @@ if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
     def test_pokerstars_full():
         """Full PokerStars log simulation.
 
-        This test will costs about 2 minutes at a 8-core machines.
+        This test will costs about 2 minutes at a 8-core machine.
         """
         import pickle
         import multiprocessing

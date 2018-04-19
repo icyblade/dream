@@ -4,6 +4,16 @@ setup(
     name='dream',
     version='0.1.0',
     packages=['dream'],
+    install_requires=[
+        'pyzmq>=16.0.3',
+        'scikit-learn>=0.19.1',
+        'numpy>=1.13.3',
+        'aenum>=2.0.9',
+    ],
+    tests_require=[
+        'pytest>=3.5.0',
+        'pytest-flake8>=1.0.0',
+    ],
     url='https://github.com/icyblade/dream',
     license='MIT',
     author='Icyblade Dai',
