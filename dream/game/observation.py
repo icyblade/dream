@@ -17,26 +17,44 @@ class Observation(object):
         self._parse_json()
 
     def update_log(self, log):
-        self.raw['log'].append(log)
+        if isinstance(log, str):
+            self.raw['log'].append(log)
+        else:
+            self.raw['log'].append('\n'.join(log))
+
+    @property
+    def json(self):
+        """Pop the latest JSON."""
+        return self.raw['json'][-1]
+
+    @property
+    def log(self):
+        """Pop the latest log."""
+        return self.raw['log'][-1]
 
     def _parse_json(self):
+        try:
+            self.update_log(self.json['playerAction']['log'])
+        except KeyError:
+            pass
+
         combo = list(map(
             lambda x: Card(x),
-            self.raw['json'][-1]['playerAction']['player']['card'].split(' ')
+            self.json['playerAction']['player']['card'].split(' ')
         ))
         if self.combo is not None:
             assert self.combo == combo
         else:
             self.combo = combo
 
-        seat = int(self.raw['json'][-1]['playerAction']['player']['position'])
+        seat = int(self.json['playerAction']['player']['position'])
         if self.seat is not None:
             assert self.seat == seat
         else:
             self.seat = seat
 
-        self.pots = self.raw['json'][-1]['playerAction']['pots']
-        self.chips = self.raw['json'][-1]['playerAction']['player']['chips']
+        self.pots = self.json['playerAction']['pots']
+        self.chips = self.json['playerAction']['player']['chips']
 
     @property
     def seat(self):

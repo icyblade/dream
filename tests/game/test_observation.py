@@ -6,7 +6,11 @@ def test_observation():
     ob.update_json({
         'playerAction': {
             'boardCards': '',
-            'log': [],
+            'log': [
+                'ONE',
+                'TWO',
+                'THREE'
+            ],
             'newCards': '',
             'player': {
                 'AIID': '2156',
@@ -38,7 +42,11 @@ def test_observation():
     ob.update_json({
         'playerAction': {
             'boardCards': 'As Kh Kc',
-            'log': [],
+            'log': [
+                'ONE',
+                'TWO',
+                'THREE'
+            ],
             'newCards': '',
             'player': {
                 'AIID': '2156',
@@ -54,4 +62,27 @@ def test_observation():
         }
     })
 
-    ob.update_log('SAMPLE_LOG')
+    assert ob.json == {
+        'playerAction': {
+            'boardCards': 'As Kh Kc',
+            'log': [
+                'ONE',
+                'TWO',
+                'THREE'
+            ],
+            'newCards': '',
+            'player': {
+                'AIID': '2156',
+                'card': '4h Qd',
+                'chips': '2008',
+                'position': '4',
+                'userID': '2400'
+            },
+            'pots': {
+                'pot': '0'
+            },
+            'round': 'FLOP'
+        }
+    }
+
+    assert ob.log == 'ONE\nTWO\nTHREE'

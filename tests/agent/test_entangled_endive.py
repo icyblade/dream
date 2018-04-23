@@ -9,19 +9,25 @@ upstream_send_message = [
                 'playerAction': {
                     'boardCards': '',
                     'log': [
-                        'PokerStars Zoom Hand #189:  Hold\'em No Limit ($2/$4) - 2018/01/31 17:52:09 ET',
-                        'Table \'2_1\' 9-max Seat #1 is the button',
-                        'Seat 1: Test_006 ($1986 in chips)',
-                        'Seat 5: AI_005 ($2008 in chips)',
-                        'Test_006: posts small blind $2',
-                        'AI_005: posts big blind $4',
+                        'PokerStars Hand #124959928530:  Hold\'em No Limit ($10.00/$20.00 USD) - 2014/11/12 8:26:34 ET',
+                        'Table \'Grus II\' 6-max Seat #3 is the button',
+                        'Seat 1: zazano ($2391 in chips)',
+                        'Seat 2: jinmay ($7997.07 in chips)',
+                        'Seat 3: davidtan23 ($2053.60 in chips)',
+                        'Seat 4: Rednaxela747 ($1007.45 in chips)',
+                        'Seat 5: bmlm ($2308.30 in chips)',
+                        'Seat 6: heffalump75 ($2433.40 in chips)',
+                        'Rednaxela747: posts small blind $10',
+                        'bmlm: posts big blind $20',
                         '*** HOLE CARDS ***',
-                        'Dealt to bmlm [4h Qd]',
-                        'AI_005: checks',
-                        'Test_006: folds',
-                        '*** SUMMARY ***',
-                        'Total pot $6 | Rake $0',
-                        'Board []'
+                        'Dealt to bmlm [Kh 4h]',
+                        'heffalump75: folds',
+                        'zazano: folds',
+                        'jinmay: folds',
+                        'davidtan23: folds',
+                        'davidtan23 said, "unittest: test for colon bypass"',
+                        'Rednaxela747: raises $40.80 to $60.80',
+                        'bmlm: calls $40.80',
                     ],
                     'newCards': '',
                     'player': {
@@ -56,7 +62,7 @@ upstream_recv_message = [
         'RS': {
             'data': {
                 'playerAction': {
-                    'action': 'RAISE 45.14152036139089'
+                    'action': 'FOLD'
                 }
             },
             'requestID': '15',
@@ -77,7 +83,7 @@ ai_message = [
     'Acting action:',
     (
         "Sending message: {'RS': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', "
-        "'data': {'playerAction': {'action': 'RAISE 45.14152036139089'}}}}"
+        "'data': {'playerAction': {'action': 'FOLD'}}}}"
     ),
     "Receiving message: {'RQ': {'token': '869492cc3d74d5bc26f0c9633c3edafb', 'requestID': '15', 'action': 'DELETE'}}",
     'SystemExit captured: Agent exits due to DELETE command',
@@ -138,7 +144,7 @@ if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
             i.start()
             sleep(0.1)
         for i in threads:
-            i.join(timeout=10)
+            i.join(timeout=5)
 
         for exception in upstream_return_value:
             raise exception

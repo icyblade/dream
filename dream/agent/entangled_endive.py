@@ -22,7 +22,7 @@ class Agent(BaseAgent):
     name: str
         Name of agent.
     port: int
-        Port to be binded.
+        Port to be bound.
     level: int
         Logging level. Default: logging.WARNING.
     """

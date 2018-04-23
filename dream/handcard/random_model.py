@@ -1,4 +1,5 @@
 from itertools import product
+
 from random import random, shuffle
 
 from . import BaseHandCard

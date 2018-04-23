@@ -98,7 +98,7 @@ def test_pokerstars():
     assert game.winner.player_name == 'bmlm'
 
 
-if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
+if 'TRAVIS' not in os.environ and 'FULLTEST' in os.environ:  # disable general tests
     def mini_batch(batch):
         from dream.game.log_parser import PokerStars
         for log in batch:

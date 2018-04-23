@@ -1,6 +1,7 @@
 try:
     from pokerai.utils.card_utils import estimate_heads_up_win_rate
     from pokerai.utils.action_utils import inference
+    from pokerai.preflop import preflop_inf
 except ImportError:
     raise ImportError('Third-party library pokerai created by Guoyong Liu is required for policy WinRateBased.')
 
@@ -8,6 +9,7 @@ import numpy as np
 
 from . import BasePolicy
 from ..game.action import Action
+from ..game.log_parser import PokerStars
 from ..handcard.random_model import RandomModel as HandCard
 
 
@@ -40,20 +42,27 @@ class WinRateBased(BasePolicy):
         self.handcard = HandCard()
 
     def act(self, observation, reward, done):
-        hole_card = map(str, observation.combo)
-        community_card = ['As', 'Kc', 'Ts', '3h'] if observation.board is None else map(str, observation.board)  # TODO
-        opponents_card_prob_li = (
-            (map(str, combo), prob)
-            for combo, prob in self.handcard.predict_proba(observation, None)
-        )  # TODO: multiple opponents?
+        if observation.board is None:
+            # preflop
+            game = PokerStars(observation.log)
+            action = preflop_inf(game)
 
-        p_strength = estimate_heads_up_win_rate(hole_card, opponents_card_prob_li, community_card=community_card)
-        score = inference(p_strength, self.mapfunc, self.bluff, self.decay, weights=self.weights)
-
-        chips = observation.chips
-        raise_value = chips * self.wr_action_curve(score)
-
-        if raise_value == 0:
-            return Action('CALL')
+            return Action(action)
         else:
-            return Action(f'RAISE {raise_value}')
+            hole_card = map(str, observation.combo)
+            community_card = map(str, observation.board)
+            opponents_card_prob_li = (
+                (map(str, combo), prob)
+                for combo, prob in self.handcard.predict_proba(observation, None)
+            )  # TODO: multiple opponents?
+
+            p_strength = estimate_heads_up_win_rate(hole_card, opponents_card_prob_li, community_card=community_card)
+            score = inference(p_strength, self.mapfunc, self.bluff, self.decay, weights=self.weights)
+
+            chips = observation.chips
+            raise_value = chips * self.wr_action_curve(score)
+
+            if raise_value == 0:
+                return Action('CALL')
+            else:
+                return Action(f'RAISE {raise_value}')

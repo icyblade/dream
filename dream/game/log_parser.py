@@ -1,7 +1,8 @@
-import re
 from collections import OrderedDict
 from datetime import datetime
 from itertools import chain
+
+import re
 
 from .action import Action
 from .card import Card
@@ -199,10 +200,7 @@ class PokerStars(Parser):
         self._parse_game_round_flop()
         self._parse_game_round_turn()
         self._parse_game_round_river()
-
-        # parse winner
-        regex_results = self._main_pot_regex.search(self.log)
-        self.winner = self.get_player(player_name=regex_results.group('player_name'))
+        self._parse_summary()
 
     def _parse_game_round_preflop(self):
         log = self._game_rounds['preflop']
@@ -257,6 +255,14 @@ class PokerStars(Parser):
 
         for player, action in self._parse_actions(log):
             self.actions['river'].append((player, action))
+
+    def _parse_summary(self):
+        log = self._game_rounds['summary']
+        if log is None:
+            return
+
+        regex_results = self._main_pot_regex.search(self.log)
+        self.winner = self.get_player(player_name=regex_results.group('player_name'))
 
     def _parse_actions(self, log: str):
         for line in log.splitlines():
