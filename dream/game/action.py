@@ -109,3 +109,40 @@ class Action(object):
         """
         if self.raise_from is not None and self.raise_to is not None:
             return self.raise_to / self.raise_from
+
+    @property
+    def minimum_raise(self):
+        """Minimum raise accepted for the next RAISE action.
+
+        Generally equals to raise_to - raise_from.
+
+        Returns
+        --------
+        float
+            None will be returned if the action is not RAISE.
+        """
+        if self.raise_from is not None and self.raise_to is not None:
+            return self.raise_to - self.raise_from
+
+
+def get_raise_strength(action: Action, previous_action: Action=None):
+    """Calculate raise strength.
+
+    Generally equals to raise_action.minimum_raise / previous_raise_action.minimum_raise.
+
+    Parameters
+    --------
+    action: instance of dream.game.action.Action
+        Current action, should be RAISE.
+    previous_action: instance of dream.game.action.Action
+        Previous action, should be RAISE.
+    """
+    if previous_action is None:
+        raise_strength = action.minimum_raise / (action.raise_from - 0)
+    else:
+        raise_strength = action.minimum_raise / previous_action.minimum_raise
+
+    if previous_action is not None and raise_strength < 1:
+        raise ValueError('Minimum raise not satisfied.')
+
+    return raise_strength

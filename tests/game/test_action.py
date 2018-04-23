@@ -2,7 +2,7 @@ import pytest
 
 
 def test_action():
-    from dream.game.action import Action, BaseAction
+    from dream.game.action import Action, BaseAction, get_raise_strength
 
     assert repr(Action('Fold')) == 'FOLD'
     assert repr(Action('CHECK')) == 'CHECK'
@@ -30,8 +30,14 @@ def test_action():
     assert action.raise_from == 100
     assert action.raise_to == 123
     assert action.raise_mult == 1.23
+    assert action.minimum_raise == 23
 
     action = Action('CALL')
     with pytest.raises(Exception):
         action.raise_from = 100
     assert action.raise_from is None
+
+    action = Action('RAISE 123', raise_from=100)
+    previous_action = Action('RAISE 100', raise_from=90)
+    assert get_raise_strength(action) == 0.23
+    assert get_raise_strength(action, previous_action) == 2.3
