@@ -88,7 +88,7 @@ class Parser(object):
         if game_round is not None:
             action_series = self.actions[game_round]
         else:
-            action_series = chain(*self.actions.values())
+            action_series = list(chain(*self.actions.values()))
 
         if player_name is not None or seat_id is not None:
             player_expected = self.get_player(player_name=player_name, seat_id=seat_id)

@@ -92,7 +92,7 @@ class Action(object):
     @raise_from.setter
     def raise_from(self, value):
         if self._action == BASE_ACTION_RAISE:
-            self._base_value = value
+            self._base_value = float(value)
         else:
             raise Exception(f'Base action type should be RAISE, {self._action} found.')
 

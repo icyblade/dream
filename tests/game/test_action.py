@@ -32,6 +32,10 @@ def test_action():
     assert action.raise_mult == 1.23
     assert action.minimum_raise == 23
 
+    action = Action('RAISE 123')
+    action.raise_from = '100'
+    assert action.raise_mult == 1.23
+
     action = Action('CALL')
     with pytest.raises(Exception):
         action.raise_from = 100
