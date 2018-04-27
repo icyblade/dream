@@ -54,9 +54,7 @@ class Agent(BaseAgent):
 
     @token.setter
     def token(self, value):
-        if self._token is not None and self._token != value:
-            raise ValueError(f'Trying to change immutable token of agent {self.name}.')
-
+        # TODO: NOT thread safe
         self._token = value
 
     @property
@@ -65,9 +63,7 @@ class Agent(BaseAgent):
 
     @request_id.setter
     def request_id(self, value):
-        if self._request_id is not None and self._request_id != value:
-            raise ValueError(f'Trying to change immutable request_id of agent {self.name}.')
-
+        # TODO: NOT thread safe
         self._request_id = value
 
     def __del__(self):
