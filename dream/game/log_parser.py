@@ -3,6 +3,7 @@ from datetime import datetime
 from itertools import chain
 
 import re
+import warnings
 
 from .action import Action
 from .card import Card
@@ -194,7 +195,8 @@ class PokerStars(Parser):
                 if current_round is None:
                     pass
                 else:
-                    self._game_rounds[current_round] = text
+                    if text and text.strip() not in ('', '[]', '[] []'):
+                        self._game_rounds[current_round] = text
 
         self._parse_game_round_preflop()
         self._parse_game_round_flop()
@@ -301,5 +303,35 @@ class PokerStars(Parser):
             pass
         elif string == 'doesn\'t show hand':
             pass
+        elif string.startswith('flods'):
+            warnings.warn('Action FLODS is illegal, use FOLDS instead.')
+            return Action('FOLD')
         else:
             raise ValueError(f'Invalid action from string: {string}.')
+
+
+class GreatMasterOfPoker(PokerStars):
+    _header_regex = re.compile(r"""
+        PokerStars\s*(Zoom)?\s*Hand\s*
+        \#(?P<log_id>.+)
+        :\s*
+        Hold'em\s*No\s*Limit\s*
+        \(\S?(?P<small_blind>[\d\.]+)/\S?(?P<big_blind>[\d\.]+)\s*(?P<currency>\S*?)\)
+        \s*-\s*(?P<time>[\d/: ]+)\s*(ET)?
+    """, re.X)
+    _table_regex = re.compile(r"""
+        Table\s*'(?P<table_name>.+?)'\s*(?P<max_players>\d+)\s*-\s*max\s*Seat\s*\#(?P<button>\d+)\s*is\s*the\s*button
+    """, re.X)
+
+    _log_attributes = {
+        'log_id': str,
+        'small_blind': float,
+        'big_blind': float,
+        'currency': str,
+        'time': lambda x: datetime.strptime(x, '%Y/%m/%d %H:%M:%S'),
+        'table_name': str,
+        'max_players': int,
+        'button': int,
+        'seat_id': int,
+        'chips': float,
+    }

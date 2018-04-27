@@ -9,7 +9,7 @@ import numpy as np
 
 from . import BasePolicy
 from ..game.action import Action
-from ..game.log_parser import PokerStars
+from ..game.log_parser import GreatMasterOfPoker
 from ..handcard.random_model import RandomModel as HandCard
 
 
@@ -44,10 +44,13 @@ class WinRateBased(BasePolicy):
     def act(self, observation, reward, done):
         if observation.board is None:
             # preflop
-            game = PokerStars(observation.log)
+            game = GreatMasterOfPoker(observation.log)
             action = preflop_inf(game)
-
-            return Action(action)
+            if action.startswith('raise'):
+                _, raise_from, _, raise_to = action.split(' ')
+                return Action(f'RAISE {raise_to[1:]}', raise_from=raise_from[1:])
+            else:
+                return Action(action)
         else:
             hole_card = map(str, observation.combo)
             community_card = map(str, observation.board)
