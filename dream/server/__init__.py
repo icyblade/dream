@@ -155,9 +155,9 @@ def create(request):
     ai_type = request.get_json()['AIType']
 
     assert position.isdigit()
-    seat_id = position - 1  # convert 1-9 to 0-8
+    seat_id = int(position) - 1  # convert 1-9 to 0-8
 
-    assert 0 <= int(seat_id) <= 8
+    assert 0 <= seat_id <= 8
 
     quota = get_nb_available_agents()
     assert str(ai_type) in quota
