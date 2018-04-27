@@ -5,7 +5,7 @@ services:
  - mysql
 before_install:
  - mysql -e 'CREATE DATABASE IF NOT EXISTS dream_test;'
- - mysql dream_test < ./icyblade/dream/tests/server/init_test_db.sql
+ - mysql dream_test < ./tests/server/init_test_db.sql
 install:
  - pip install codecov
  - pip install pytest-cov
