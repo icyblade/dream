@@ -21,6 +21,8 @@ def test_action():
         Action(BaseAction('Raise'))
 
     action = Action('RAISE 123')
+    assert action.minimum_raise == 123
+
     action.raise_from = 100
     assert action.raise_from == 100
     assert action.raise_to == 123

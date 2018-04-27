@@ -107,7 +107,7 @@ class Action(object):
         float
             None will be returned if the action is not RAISE.
         """
-        if self.raise_from is not None and self.raise_to is not None:
+        if self._action == BASE_ACTION_RAISE:
             return self.raise_to / self.raise_from
 
     @property
@@ -121,8 +121,8 @@ class Action(object):
         float
             None will be returned if the action is not RAISE.
         """
-        if self.raise_from is not None and self.raise_to is not None:
-            return self.raise_to - self.raise_from
+        if self._action == BASE_ACTION_RAISE:
+            return self.raise_to - (self.raise_from or 0)
 
 
 def get_raise_strength(action: Action, previous_action: Action=None):
