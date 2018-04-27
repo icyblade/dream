@@ -1,0 +1,5 @@
+{
+  "SQLALCHEMY_DATABASE_URI": "mysql://travis:@127.0.0.1/dream_test",
+  "SQLALCHEMY_TRACK_MODIFICATIONS": "False",
+  "SERVER_ADDRESS": "127.0.0.1"
+}

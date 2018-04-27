@@ -3,18 +3,18 @@ from itertools import product
 import os
 import requests
 
-if 'TRAVIS' not in os.environ:
-    def test_server(host='http://127.0.0.1:10000'):
+
+TEST_PORT = 10000
+
+
+def server_test_thread(return_value: list):
+    try:
+        host = f'http://127.0.0.1:{TEST_PORT}'
         AGENTS = []  # agents to be created
-        for table_id, position, ai_type in product(range(2), range(6), ['entangled_endive']):
+        for table_id, position, ai_type in product(range(2), range(3), ['entangled_endive']):
             AGENTS.append({
                 'tableid': str(table_id), 'position': str(position), 'AIType': ai_type
             })
-
-        # base
-        assert requests.get(f'{host}/api').json() == {
-            'errcode': 1, 'error_message': 'Invalid parameter action: '
-        }
 
         # empty agent list
         assert requests.post(f'{host}/api?action=Empty').json() == {
@@ -48,13 +48,13 @@ if 'TRAVIS' not in os.environ:
         # get all agents
         assert requests.get(f'{host}/api?action=GetAIList').json() == {
             'errcode': 0,
-            'AITypeList': {'entangled_endive': {'numbers': 12, 'EVRange': 0.0}},
+            'AITypeList': {'entangled_endive': {'numbers': 6, 'EVRange': 0.0}},
         }
 
         # get quota
         assert requests.get(f'{host}/api?action=GetQuotaList').json() == {
             'errcode': 0,
-            'AITypeList': {'entangled_endive': {'numbers': 500, 'EVRange': 0.0}},
+            'AITypeList': {'entangled_endive': {'numbers': 506, 'EVRange': 0.0}},
         }
 
         # delete this agent
@@ -76,3 +76,41 @@ if 'TRAVIS' not in os.environ:
             'errcode': 0,
             'AITypeList': {'entangled_endive': {'numbers': 512, 'EVRange': 0.0}},
         }, result
+    except Exception as e:
+        return_value.append(e)
+
+
+def server_thread(return_value: list):
+    try:
+        os.system((
+            'CONFIG_FILE=../../config_travis.json '
+            'FLASK_APP=../../dream/server/__init__.py '
+            f'python3.6 -m flask run -h 0.0.0.0 -p {TEST_PORT}'
+        ))
+    except Exception as e:
+        return_value.append(e)
+
+
+def test_server():
+    from time import sleep
+    from threading import Thread
+
+    server_test_exceptions, server_exceptions = [], []
+
+    threads = [
+        Thread(target=server_thread, args=(server_exceptions, )),
+        Thread(target=server_test_thread, args=(server_test_exceptions,)),
+    ]
+
+    for i in threads:
+        i.daemon = True
+        i.start()
+        sleep(2)  # wait for server start
+    for i in threads:
+        i.join(timeout=10)
+
+    for e in server_exceptions:
+        raise e
+
+    for e in server_test_exceptions:
+        raise e
