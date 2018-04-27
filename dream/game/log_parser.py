@@ -316,7 +316,7 @@ class GreatMasterOfPoker(PokerStars):
         \#(?P<log_id>.+)
         :\s*
         Hold'em\s*No\s*Limit\s*
-        \(\S?(?P<small_blind>[\d\.]+)/\S?(?P<big_blind>[\d\.]+)\s*(?P<currency>\S*?)\)
+        \(\D?(?P<small_blind>[\d\.]+)/\D?(?P<big_blind>[\d\.]+)\s*(?P<currency>\S*?)\)
         \s*-\s*(?P<time>[\d/: ]+)\s*(ET)?
     """, re.X)
     _table_regex = re.compile(r"""
