@@ -48,7 +48,7 @@ class WinRateBased(BasePolicy):
             action = preflop_inf(game)
             if action.startswith('raise'):
                 _, raise_from, _, raise_to = action.split(' ')
-                return Action(f'RAISE {raise_to[1:]}', raise_from=raise_from[1:])
+                return Action(f'RAISE {raise_to[1:]}')
             else:
                 return Action(action)
         else:
