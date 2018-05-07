@@ -7,7 +7,7 @@ import requests
 TEST_PORT = 10000
 
 
-def func_server_thread(return_value: list):
+def func_test_thread(return_value: list):
     try:
         host = f'http://127.0.0.1:{TEST_PORT}'
         AGENTS = []  # agents to be created
@@ -80,7 +80,7 @@ def func_server_thread(return_value: list):
         return_value.append(e)
 
 
-def server_thread_func(return_value: list):
+def func_server_thread(return_value: list):
     try:
         path = os.path.dirname(os.path.abspath(__file__))
         os.system((
@@ -92,24 +92,25 @@ def server_thread_func(return_value: list):
         return_value.append(e)
 
 
-def test_server():
-    from time import sleep
-    from threading import Thread
+if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
+    def test_server():
+        from time import sleep
+        from threading import Thread
 
-    server_test_exceptions, server_exceptions = [], []
+        server_test_exceptions, server_exceptions = [], []
 
-    server_thread = Thread(target=server_thread_func, args=(server_exceptions,))
-    test_thread = Thread(target=func_server_thread, args=(server_test_exceptions,))
+        server_thread = Thread(target=func_server_thread, args=(server_exceptions,))
+        test_thread = Thread(target=func_test_thread, args=(server_test_exceptions,))
 
-    server_thread.daemon = True
-    server_thread.start()
-    sleep(10)  # wait for server start
-    test_thread.daemon = True
-    test_thread.start()
-    test_thread.join()
+        server_thread.daemon = True
+        server_thread.start()
+        sleep(10)  # wait for server start
+        test_thread.daemon = True
+        test_thread.start()
+        test_thread.join()
 
-    for e in server_exceptions:
-        raise e
+        for e in server_exceptions:
+            raise e
 
-    for e in server_test_exceptions:
-        raise e
+        for e in server_test_exceptions:
+            raise e
