@@ -101,11 +101,11 @@ def test_server():
     server_thread = Thread(target=server_thread_func, args=(server_exceptions,))
     test_thread = Thread(target=func_server_thread, args=(server_test_exceptions,))
 
-    for i in [server_thread, test_thread]:
-        i.daemon = True
-        i.start()
-        sleep(2)  # wait for server start
-
+    server_thread.daemon = True
+    server_thread.start()
+    sleep(10)  # wait for server start
+    test_thread.daemon = True
+    test_thread.start()
     test_thread.join()
 
     for e in server_exceptions:
