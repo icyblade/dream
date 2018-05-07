@@ -7,11 +7,11 @@ import requests
 TEST_PORT = 10000
 
 
-def server_test_thread(return_value: list):
+def func_server_thread(return_value: list):
     try:
         host = f'http://127.0.0.1:{TEST_PORT}'
         AGENTS = []  # agents to be created
-        for table_id, position, ai_type in product(range(2), range(3), ['entangled_endive']):
+        for table_id, position, ai_type in product(range(2), range(1, 4), ['entangled_endive']):
             AGENTS.append({
                 'tableid': str(table_id), 'position': str(position), 'AIType': ai_type
             })
@@ -80,11 +80,12 @@ def server_test_thread(return_value: list):
         return_value.append(e)
 
 
-def server_thread(return_value: list):
+def server_thread_func(return_value: list):
     try:
+        path = os.path.dirname(os.path.abspath(__file__))
         os.system((
-            'CONFIG_FILE=../../config_travis.json '
-            'FLASK_APP=../../dream/server/__init__.py '
+            f'CONFIG_FILE={path}/../../config_travis.json '
+            f'FLASK_APP={path}/../../dream/server/__init__.py '
             f'python3.6 -m flask run -h 0.0.0.0 -p {TEST_PORT}'
         ))
     except Exception as e:
@@ -97,17 +98,15 @@ def test_server():
 
     server_test_exceptions, server_exceptions = [], []
 
-    threads = [
-        Thread(target=server_thread, args=(server_exceptions, )),
-        Thread(target=server_test_thread, args=(server_test_exceptions,)),
-    ]
+    server_thread = Thread(target=server_thread_func, args=(server_exceptions,))
+    test_thread = Thread(target=func_server_thread, args=(server_test_exceptions,))
 
-    for i in threads:
+    for i in [server_thread, test_thread]:
         i.daemon = True
         i.start()
         sleep(2)  # wait for server start
-    for i in threads:
-        i.join(timeout=10)
+
+    test_thread.join()
 
     for e in server_exceptions:
         raise e

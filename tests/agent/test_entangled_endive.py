@@ -124,7 +124,7 @@ def ai_thread(caplog, return_value):
     seed(0)
     agent.run()
 
-    return_value.extend([rec.message for rec in caplog.records])
+    return_value.extend([rec.message for rec in caplog.records if rec.name == 'dream.agent.entangled_endive/TestAgent'])
 
 
 if 'TRAVIS' not in os.environ:  # disable CI tests due to 3rd party dependencies
