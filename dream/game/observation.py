@@ -53,13 +53,14 @@ class Observation(object):
         else:
             self.seat = seat
 
-        board = list(map(
-            Card, self.json['playerAction']['boardCards'].split(' ')
-        ))
-        if self.board is not None:
-            assert self.board == board
-        else:
-            self.board = board
+        if self.json['playerAction']['boardCards']:
+            board = list(map(
+                Card, self.json['playerAction']['boardCards'].split(' ')
+            ))
+            if self.board is not None:
+                assert self.board == board
+            else:
+                self.board = board
 
         self.pots = self.json['playerAction']['pots']
         self.chips = self.json['playerAction']['player']['chips']

@@ -318,7 +318,7 @@ class GreatMasterOfPoker(PokerStars):
         :\s*
         Hold'em\s*No\s*Limit\s*
         \(\D?(?P<small_blind>[\d\.]+)/\D?(?P<big_blind>[\d\.]+)\s*(?P<currency>\S*?)\)
-        \s*-\s*(?P<time>[\d/: ]+)\s*(ET)?
+        \s*-\s*(?P<time>[\d/: ]+?)\s*(ET)\n
     """, re.X)
     _table_regex = re.compile(r"""
         Table\s*'(?P<table_name>.+?)'\s*(?P<max_players>\d+)\s*-\s*max\s*Seat\s*\#(?P<button>\d+)\s*is\s*the\s*button

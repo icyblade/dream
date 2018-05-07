@@ -114,7 +114,7 @@ if 'TRAVIS' not in os.environ and 'FULLTEST' in os.environ:  # disable general t
         from multiprocessing import Process
 
         jobs = 8
-        multiprocessing.set_start_method('forkserver')
+        multiprocessing.set_start_method('forkserver', force=True)
 
         with open('/data/datasets/texas_holdem/data.pickle', 'rb') as f:
             data = pickle.load(f)

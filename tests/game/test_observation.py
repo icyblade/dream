@@ -30,8 +30,7 @@ def test_observation():
 
     assert ob.combo == [Card('4h'), Card('Qd')]
 
-    ob.board = ['9s', '7s', '6h']
-    assert ob.board == [Card('9s'), Card('7s'), Card('6h')]
+    assert ob.board is None
 
     assert ob.to_numeric() == [4, 28, 131]
 
