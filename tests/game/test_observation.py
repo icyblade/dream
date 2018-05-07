@@ -85,4 +85,5 @@ def test_observation():
         }
     }
 
+    assert ob.board == [Card('As'), Card('Kh'), Card('Kc')]
     assert ob.log == 'ONE\nTWO\nTHREE'

@@ -39,7 +39,7 @@ class Observation(object):
             pass
 
         combo = list(map(
-            lambda x: Card(x),
+            Card,
             self.json['playerAction']['player']['card'].split(' ')
         ))
         if self.combo is not None:
@@ -52,6 +52,14 @@ class Observation(object):
             assert self.seat == seat
         else:
             self.seat = seat
+
+        board = list(map(
+            Card, self.json['playerAction']['boardCards'].split(' ')
+        ))
+        if self.board is not None:
+            assert self.board == board
+        else:
+            self.board = board
 
         self.pots = self.json['playerAction']['pots']
         self.chips = self.json['playerAction']['player']['chips']

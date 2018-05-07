@@ -264,7 +264,8 @@ class PokerStars(Parser):
             return
 
         regex_results = self._main_pot_regex.search(self.log)
-        self.winner = self.get_player(player_name=regex_results.group('player_name'))
+        if regex_results:
+            self.winner = self.get_player(player_name=regex_results.group('player_name'))
 
     def _parse_actions(self, log: str):
         for line in log.splitlines():
