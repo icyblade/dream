@@ -118,7 +118,7 @@ class Observation(object):
         Returns
         --------
         list of instance of dream.game.card.Card
-            List of three board cards. For example: `['5c', '4s', 'As']`.
+            List of board cards. For example: `['5c', '4s', 'As']`.
         """
         return self._board
 
@@ -129,10 +129,10 @@ class Observation(object):
         Parameters
         --------
         value: list of str
-            List of three board cards. For example: `['5c', '4s', 'As']`.
+            List of board cards. For example: `['5c', '4s', 'As']`.
         """
         assert isinstance(value, list) or isinstance(value, tuple)
-        assert len(value) == 3
+        assert len(value) in (3, 4, 5)
         self._board = list(map(lambda x: Card(x), value))
 
     @property
