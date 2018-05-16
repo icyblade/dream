@@ -120,7 +120,7 @@ class PokerStars(Parser):
 
     _action_regex = re.compile(r"(?P<player_name>.+?): (?P<action>.+)")
     _chat_regex = re.compile(r'(?P<player_name>.+?) said, "(?P<message>.*?)"')
-    _raise_regex = re.compile(r"raises .(?P<raise_from>[\d.]+) to .(?P<raise_to>[\d.]+)")
+    _raise_regex = re.compile(r"raises .(?P<raise_diff>[\d.]+) to .(?P<raise_to>[\d.]+)")
     _bet_regex = re.compile(r"bets .(?P<raise_to>[\d.]+)")
     _allin_regex = re.compile(r".*? and is all-in")
 
@@ -290,8 +290,8 @@ class PokerStars(Parser):
             return Action('FOLD')
         elif string.startswith('raises'):
             regex_result = self._raise_regex.search(string)
-            raise_to = regex_result.group('raise_to')
-            raise_from = regex_result.group('raise_from')
+            raise_to = float(regex_result.group('raise_to'))
+            raise_from = raise_to - float(regex_result.group('raise_diff'))
             action = Action(f'RAISE {raise_to}')
             action.raise_from = raise_from
             return action

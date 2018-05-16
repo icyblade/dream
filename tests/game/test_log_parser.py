@@ -81,6 +81,12 @@ def test_pokerstars():
     assert set(game._game_rounds.keys()).issubset({
         'preflop', 'flop', 'turn', 'river', 'show down', 'summary'
     })
+    assert repr(game.get_actions(player_name='Rednaxela747', game_round='preflop')) == (
+        '['
+        '(<Player Rednaxela747 at seat 4>, RAISE 60.8 from 20.0)'
+        ']'
+    )
+    print(game.get_actions(player_name='Rednaxela747', game_round='preflop'))
 
     assert game.current_player.player_name == 'bmlm'
     assert game.current_handcard == [Card('Kh'), Card('4h')]
